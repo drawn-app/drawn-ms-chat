@@ -89,6 +89,7 @@ export async function SendMessage(call: ServerUnaryCall<MessageRequest__Output, 
 }
 
 export async function ReceiveMessages(call: ServerWritableStream<RoomRequest__Output, MessageGrpc>) {
+    console.log('ReceiveMessages called with', call.request)
 
     // Validate request
     if (!call.request.userId) {
