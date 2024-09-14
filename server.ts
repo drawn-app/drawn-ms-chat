@@ -3,7 +3,7 @@ import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
 import { ProtoGrpcType } from './proto/generatedTypes/chat'
 import { ChatHandlers } from './proto/generatedTypes/chat/Chat'
-import { GetMessages } from './services/chatService'
+import { GetMessages, SendMessage } from './services/chatService'
 
 const PORT = 8082
 const SERVER_URI = `0.0.0.0:${PORT}`;
@@ -19,17 +19,7 @@ const server = new grpc.Server()
 
 server.addService(chatPackage.Chat.service, {
   GetMessages,
-  
-//   ReceiveMessages: (call) => {
-//     console.log('ReceiveMessages called')
-//     call.write({ text: 'Hello' })
-//     call.write({ text: 'World' })
-//     call.end()
-//   },
-//   SendMessage: (call, callback) => {
-//     console.log('SendMessage called with', call.request)
-//     callback(null, {})
-//   },
+  SendMessage,
 })
 
 

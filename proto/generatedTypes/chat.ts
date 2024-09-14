@@ -13,6 +13,7 @@ export interface ProtoGrpcType {
     Empty: MessageTypeDefinition
     Message: MessageTypeDefinition
     MessageList: MessageTypeDefinition
+    MessageRequest: MessageTypeDefinition
     RoomRequest: MessageTypeDefinition
   }
   google: {

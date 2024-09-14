@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 
 service Chat {
   rpc GetMessages (RoomRequest) returns (MessageList) {}
-  rpc SendMessage (Message) returns (Empty) {}
+  rpc SendMessage (MessageRequest) returns (Empty) {}
   rpc ReceiveMessages (RoomRequest) returns (stream Message) {}
 }
 
@@ -18,6 +18,12 @@ message Message {
     int32 workspaceId = 3;
     string text = 4;
     google.protobuf.Timestamp createdAt = 5;
+}
+
+message MessageRequest {
+    string userId = 1;
+    int32 workspaceId = 2;
+    string text = 3;
 }
 
 message RoomRequest {
