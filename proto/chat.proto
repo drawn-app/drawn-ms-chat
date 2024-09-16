@@ -7,7 +7,9 @@ import "google/protobuf/timestamp.proto";
 service Chat {
   rpc GetMessages (RoomRequest) returns (MessageList) {}
   rpc SendMessage (MessageRequest) returns (Empty) {}
-  rpc ReceiveMessages (RoomRequest) returns (stream Message) {}
+  rpc UpdateMessage (UpdateMessageRequest) returns (Empty) {}
+  rpc DeleteMessage (DeleteMessageRequest) returns (Empty) {}
+  rpc ReceiveMessages (RoomRequest) returns (stream ReceiveMessageResponse) {}
 }
 
 message Empty {}
@@ -18,6 +20,7 @@ message Message {
     int32 workspaceId = 3;
     string text = 4;
     google.protobuf.Timestamp createdAt = 5;
+    google.protobuf.Timestamp updatedAt = 6;
 }
 
 message MessageRequest {
@@ -33,4 +36,24 @@ message RoomRequest {
 
 message MessageList {
     repeated Message messages = 1;
+}
+
+message UpdateMessageRequest {
+    string id = 1;
+    string text = 2;
+}
+
+message DeleteMessageRequest {
+    string id = 1;
+}
+
+message ReceiveMessageResponse {
+    Message message = 1;
+    MessageAction action = 2;
+}
+
+enum MessageAction {
+    CREATE = 0;
+    UPDATE = 1;
+    DELETE = 2;
 }

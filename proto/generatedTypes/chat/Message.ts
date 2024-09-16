@@ -8,6 +8,7 @@ export interface Message {
   'workspaceId'?: (number);
   'text'?: (string);
   'createdAt'?: (_google_protobuf_Timestamp | null);
+  'updatedAt'?: (_google_protobuf_Timestamp | null);
 }
 
 export interface Message__Output {
@@ -16,4 +17,5 @@ export interface Message__Output {
   'workspaceId'?: (number);
   'text'?: (string);
   'createdAt'?: (_google_protobuf_Timestamp__Output);
+  'updatedAt'?: (_google_protobuf_Timestamp__Output);
 }
