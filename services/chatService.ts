@@ -12,12 +12,14 @@ import { DeleteMessageRequest__Output } from "../proto/generatedTypes/chat/Delet
 
 export async function GetMessages(call: ServerUnaryCall<RoomRequest__Output, MessageList>, callback: sendUnaryData<MessageList>) {
     console.log('GetMessages called with', call.request)
+    const userId = (call.metadata.get('x-id').length > 0) ? call.metadata.get('x-id')[0] : null
+    const role = (call.metadata.get('x-role').length > 0) ? call.metadata.get('x-role')[0] : null
 
     // Validate request
-    if (!call.request.userId) {
+    if (!userId || !role) {
         callback({
-            code: status.INVALID_ARGUMENT,
-            message: 'userId is required'
+            code: status.UNAUTHENTICATED,
+            message: 'User not authenticated'
         })
         return
     }
@@ -92,9 +94,11 @@ export async function SendMessage(call: ServerUnaryCall<MessageRequest__Output, 
 
 export async function ReceiveMessages(call: ServerWritableStream<RoomRequest__Output, ReceiveMessageResponse>) {
     console.log('ReceiveMessages called with', call.request)
+    const userId = (call.metadata.get('x-id').length > 0) ? call.metadata.get('x-id')[0] : null
+    const role = (call.metadata.get('x-role').length > 0) ? call.metadata.get('x-role')[0] : null
 
     // Validate request
-    if (!call.request.userId) {
+    if (!userId || !role) {
         call.emit('error', {
             code: status.INVALID_ARGUMENT,
             message: 'userId is required'
@@ -105,22 +109,22 @@ export async function ReceiveMessages(call: ServerWritableStream<RoomRequest__Ou
     if (!call.request.workspaceId) {
         call.emit('error', {
             code: status.INVALID_ARGUMENT,
-            message: 'userId is required'
+            message: 'workspaceId is required'
         })
         return
     }
 
     call.on('cancelled', () => {
         console.log('Stream cancelled', call.request)
-        chatManager.removeSession(call.request.workspaceId || -1, call.request.userId || "")
+        chatManager.removeSession(call.request.workspaceId || -1, userId.toString() || "")
     })
 
     call.on('error', function(e) {
         console.log('Stream error', call.request)
-        chatManager.removeSession(call.request.workspaceId || -1, call.request.userId || "")
+        chatManager.removeSession(call.request.workspaceId || -1, userId.toString() || "")
     });
 
-    chatManager.addSession(call.request.workspaceId, call.request.userId, call)
+    chatManager.addSession(call.request.workspaceId, userId.toString(), call)
 
 }
 
