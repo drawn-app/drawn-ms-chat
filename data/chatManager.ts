@@ -46,7 +46,7 @@ class ChatManager {
         }
         if (!this.chats.has(workspaceId)) return
         this.chats.get(workspaceId)?.forEach((stream, userId) => {
-            if (userId === senderId) return
+            // if (userId === senderId) return
             stream.write(receiveMessageResponse)
         })
     }

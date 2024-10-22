@@ -1,4 +1,4 @@
-import { sendUnaryData, ServerUnaryCall, ServerWritableStream, status } from "@grpc/grpc-js"
+import { Metadata, sendUnaryData, ServerUnaryCall, ServerWritableStream, status } from "@grpc/grpc-js"
 import { db } from "../utils/db"
 import { dateToTimestamp } from "../utils/dataConverter"
 import { RoomRequest__Output } from "../proto/generatedTypes/chat/RoomRequest"
@@ -45,6 +45,13 @@ export async function GetMessages(call: ServerUnaryCall<RoomRequest__Output, Mes
         },
     })
 
+    const origin = (call.metadata.get('origin').length > 0) ? call.metadata.get('origin')[0] : null
+
+    const outgoingHeaders = new Metadata();
+    outgoingHeaders.set('origin', (origin) ? origin : '*');
+    outgoingHeaders.set('Access-Control-Allow-Credentials', 'true');
+    call.sendMetadata(outgoingHeaders)
+    
     callback(null, { messages: messages.map((message) => ({...message, createdAt: dateToTimestamp(message.createdAt), updatedAt: dateToTimestamp(message.updatedAt)})) })
 }
 
@@ -89,6 +96,13 @@ export async function SendMessage(call: ServerUnaryCall<MessageRequest__Output, 
     // Broadcast message to all users in the workspace
     chatManager.broadcastMessage(call.request.workspaceId, call.request.userId, message, 'CREATE')
 
+    const origin = (call.metadata.get('origin').length > 0) ? call.metadata.get('origin')[0] : null
+
+    const outgoingHeaders = new Metadata();
+    outgoingHeaders.set('origin', (origin) ? origin : '*');
+    outgoingHeaders.set('Access-Control-Allow-Credentials', 'true');
+    call.sendMetadata(outgoingHeaders)
+
     callback(null, {})
 }
 
@@ -123,6 +137,13 @@ export async function ReceiveMessages(call: ServerWritableStream<RoomRequest__Ou
         console.log('Stream error', call.request)
         chatManager.removeSession(call.request.workspaceId || -1, userId.toString() || "")
     });
+
+    const origin = (call.metadata.get('origin').length > 0) ? call.metadata.get('origin')[0] : null
+
+    const outgoingHeaders = new Metadata();
+    outgoingHeaders.set('origin', (origin) ? origin : '*');
+    outgoingHeaders.set('Access-Control-Allow-Credentials', 'true');
+    call.sendMetadata(outgoingHeaders)
 
     chatManager.addSession(call.request.workspaceId, userId.toString(), call)
 
@@ -168,6 +189,13 @@ export async function UpdateMessage(call: ServerUnaryCall<UpdateMessageRequest__
         })
         return
     }
+
+    const origin = (call.metadata.get('origin').length > 0) ? call.metadata.get('origin')[0] : null
+
+    const outgoingHeaders = new Metadata();
+    outgoingHeaders.set('origin', (origin) ? origin : '*');
+    outgoingHeaders.set('Access-Control-Allow-Credentials', 'true');
+    call.sendMetadata(outgoingHeaders)
     
     callback(null, {})
 }
@@ -201,6 +229,13 @@ export async function DeleteMessage(call: ServerUnaryCall<DeleteMessageRequest__
         })
         return
     }
+
+    const origin = (call.metadata.get('origin').length > 0) ? call.metadata.get('origin')[0] : null
+
+    const outgoingHeaders = new Metadata();
+    outgoingHeaders.set('origin', (origin) ? origin : '*');
+    outgoingHeaders.set('Access-Control-Allow-Credentials', 'true');
+    call.sendMetadata(outgoingHeaders)
     
     callback(null, {})
 }
