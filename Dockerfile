@@ -10,13 +10,21 @@ COPY . .
 RUN npm run proto:gen
 RUN npx prisma generate
 
+RUN npm run build
+
 # Stage 2: Run the application
 FROM node:20.11.0-alpine AS prod
 
 WORKDIR /app
 
-COPY --from=build /app /app
+COPY --from=build /app/build /app
+COPY --from=build /app/package*.json /app/
+COPY --from=build /app/prisma /app/prisma
+
+RUN npm install --only=production
+RUN npm install prisma --save-dev
+RUN npx prisma generate
 
 EXPOSE 8082
 
-CMD ["npm", "run", "dev"]
+CMD ["node", "/app/server.js"]

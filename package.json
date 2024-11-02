@@ -5,7 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "proto:gen": "echo Generating typescript types from proto files... && npx proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/generatedTypes proto/chat.proto && echo Done",
-    "dev": "ts-node server.ts"
+    "dev": "ts-node server.ts",
+    "build": "tsc",
+    "start": "node ./build/server.js"
   },
   "author": "",
   "license": "ISC",
