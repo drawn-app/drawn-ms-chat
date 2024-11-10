@@ -20,6 +20,7 @@ WORKDIR /app
 COPY --from=build /app/build /app
 COPY --from=build /app/package*.json /app/
 COPY --from=build /app/prisma /app/prisma
+COPY --from=build /app/proto/chat.proto /app/proto/chat.proto
 
 RUN npm install --only=production
 RUN npm install prisma --save-dev
